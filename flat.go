@@ -134,8 +134,8 @@ func uf(k string, v interface{}, opts *Options) (n interface{}) {
 			var temp []interface{} = make([]interface{}, idx+1)
 			temp[idx] = n
 			// debug
-			fmt.Println("temp", temp)
-			fmt.Println("n", n)
+			// fmt.Println("temp", temp)
+			// fmt.Println("n", n)
 
 			n = temp
 		} else {
@@ -143,8 +143,8 @@ func uf(k string, v interface{}, opts *Options) (n interface{}) {
 			temp[keys[i]] = n
 
 			// debug
-			fmt.Println("temp", temp)
-			fmt.Println("n", n)
+			// fmt.Println("temp", temp)
+			// fmt.Println("n", n)
 
 			n = temp
 		}
