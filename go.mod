@@ -1,4 +1,4 @@
-module github.com/nqd/flat
+module github.com/AgrimPrasad/flat
 
 go 1.12
 

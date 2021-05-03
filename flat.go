@@ -97,7 +97,7 @@ func update(to map[string]interface{}, from map[string]interface{}) {
 }
 
 // Unflatten the map, it returns a nested map of a map
-// By default, the flatten has Delimiter = "."
+// By default, Unflatten has Delimiter = "."
 func Unflatten(flat map[string]interface{}, opts *Options) (nested map[string]interface{}, err error) {
 	if opts == nil {
 		opts = &Options{
@@ -114,6 +114,33 @@ func unflatten(flat map[string]interface{}, opts *Options) (nested map[string]in
 	for k, v := range flat {
 		temp := uf(k, v, opts).(map[string]interface{})
 		err = mergo.Merge(&nested, temp)
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+// UnflattenWithOriginal unflattens the flat map while keeping the structure of the original map
+// Accounts for information loss inherent with flattened maps
+// By default, UnflattenWithOriginal has Delimiter = "."
+func UnflattenWithOriginal(flat, original map[string]interface{}, opts *Options) (nested map[string]interface{}, err error) {
+	if opts == nil {
+		opts = &Options{
+			Delimiter: ".",
+		}
+	}
+	nested, err = unflattenWithOriginal(flat, original, opts)
+	return
+}
+
+func unflattenWithOriginal(flat, original map[string]interface{}, opts *Options) (nested map[string]interface{}, err error) {
+	// nested = make(map[string]interface{})
+
+	for k, v := range flat {
+		temp := uf(k, v, opts).(map[string]interface{})
+		err = mergo.Merge(&original, temp)
 		if err != nil {
 			return
 		}
