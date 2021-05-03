@@ -1,6 +1,7 @@
 package flat
 
 import (
+	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
@@ -122,43 +123,35 @@ func unflatten(flat map[string]interface{}, opts *Options) (nested map[string]in
 	return
 }
 
-// UnflattenWithOriginal unflattens the flat map while keeping the structure of the original map
-// Accounts for information loss inherent with flattened maps
-// By default, UnflattenWithOriginal has Delimiter = "."
-func UnflattenWithOriginal(flat, original map[string]interface{}, opts *Options) (nested map[string]interface{}, err error) {
-	if opts == nil {
-		opts = &Options{
-			Delimiter: ".",
-		}
-	}
-	nested, err = unflattenWithOriginal(flat, original, opts)
-	return
-}
-
-func unflattenWithOriginal(flat, original map[string]interface{}, opts *Options) (nested map[string]interface{}, err error) {
-	// nested = make(map[string]interface{})
-
-	for k, v := range flat {
-		temp := uf(k, v, opts).(map[string]interface{})
-		err = mergo.Merge(&original, temp)
-		if err != nil {
-			return
-		}
-	}
-
-	return
-}
-
 func uf(k string, v interface{}, opts *Options) (n interface{}) {
 	n = v
 
 	keys := strings.Split(k, opts.Delimiter)
 
 	for i := len(keys) - 1; i >= 0; i-- {
-		temp := make(map[string]interface{})
-		temp[keys[i]] = n
-		n = temp
+		// if key is number, assume that the value is an array
+		if idx, err := strconv.Atoi(keys[i]); err == nil {
+			var temp []interface{} = make([]interface{}, idx+1)
+			temp[idx] = n
+			// debug
+			fmt.Println("temp", temp)
+			fmt.Println("n", n)
+
+			n = temp
+		} else {
+			temp := make(map[string]interface{})
+			temp[keys[i]] = n
+
+			// debug
+			fmt.Println("temp", temp)
+			fmt.Println("n", n)
+
+			n = temp
+		}
 	}
+
+	// debug
+	fmt.Println("n finally", n)
 
 	return
 }

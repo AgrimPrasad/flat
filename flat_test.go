@@ -107,6 +107,31 @@ func TestFlatten(t *testing.T) {
 				"world.lorem.ipsum": "again",
 				"world.lorem.dolor": "sit"},
 		},
+		// multiple keys with slices
+		{
+			`{
+				"hello": {
+					"lorem": {
+						"ipsum":"again",
+						"dolor":"sit"
+					}
+				},
+				"cities": [
+					{
+						"la": "hot"
+					},
+					{
+						"toronto": "cold"
+					}
+				]
+			}`,
+			nil,
+			map[string]interface{}{
+				"hello.lorem.ipsum": "again",
+				"hello.lorem.dolor": "sit",
+				"cities.0.la":       "hot",
+				"cities.1.toronto":  "cold"},
+		},
 		// empty object
 		{
 			`{"hello":{"empty":{"nested":{}}}}`,
@@ -276,6 +301,28 @@ func TestUnflatten(t *testing.T) {
 			},
 			map[string]interface{}{
 				"travis": "true",
+			},
+		},
+		// multiple keys with slices
+		{
+			map[string]interface{}{
+				"hello.lorem.ipsum": "again",
+				"hello.lorem.dolor": "sit",
+				"cities.0.la":       "hot",
+				"cities.1.toronto":  "cold",
+			},
+			nil,
+			map[string]interface{}{
+				"hello": map[string]interface{}{
+					"lorem": map[string]interface{}{
+						"ipsum": "again",
+						"dolor": "sit",
+					},
+				},
+				"cities": []interface{}{
+					map[string]interface{}{"la": "hot"},
+					map[string]interface{}{"toronto": "cold"},
+				},
 			},
 		},
 		// todo
